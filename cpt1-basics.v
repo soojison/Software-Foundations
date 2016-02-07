@@ -291,21 +291,96 @@ Example test_blt_nat4: (blt_nat 1 2) = true.
 Proof. reflexivity. Qed.
 
 
+(* Proof by simplification *)
+(* How to state and prove properties of their behavior? *)
+
+Theorem plus_0_n : forall n : nat, 0 + n = n.
+Proof.
+  intros n. reflexivity. Qed.
+(* 0 is a "neutral element" for + on the left
+    is proved by just observing that 0 + n reduces to n
+    no matter what n is, a fact that can be read directly 
+    off the definition of plue *)
+
+(* difference: we used Theorem instead of Example
+    which is just a matter of style.
+    Theorem, Example, Lemma, Fact, Remark mean the same thing *)
+
+(* intros n moves the quantifier from the goal to a "context"
+    of current assumptions. It's the same as saying
+    "Suppose n is some arbitrary number." *)
+
+Theorem plus_n_0: forall n, n + 0 = n.
+Proof.
+  simpl. (* doesn't do anything *)
+Abort.
+
+(* because the subgoal doesn't change into evaluating
+    n+0 in this case *)
+
+Theorem plus_1_1 : forall n : nat, 1 + n = S n.
+Proof.
+  intros n. reflexivity. Qed.
+
+Theorem mult_0_1: forall n : nat, 0 × n = 0.
+Proof.
+  intros n. reflexivity. Qed.
 
 
+(* Proof by Rewriting *)
 
+Theorem plus_id_example : forall n m:nat,
+  n = m ->
+  n + n = m + m.
 
+(* specialized property that holds only when m = n.
+    the -> symbol means "implies" *)
 
+(* since m and n are arbitrary numbers, we cannot just use
+    simplification to prove this theorem. 
+   We prove it by observing that if n = m, 
+    we can replace n with m in the goal and obtain equality.
+  This tactic in Coq is called rewrite *)
+Proof.
+  intros n m. (* move both quantifiers into the context *)
+  intros H. (* move the hypothesis into the context n = m *)
+  rewrite -> H. (* rewrite the goal to m+m = m+m using the hypothesis *)
+  (* you could do rewrite <- H and see what happens. 
+    basically it changes to n + n = n + n*)  
+  reflexivity. Qed.
 
+(* Exercise - plus_id exercise *)
+Theorem plus_id_exercise: forall n m o: nat, 
+  n = m -> m = o -> n + m = m + o.
+Proof.
+  intros n m o.
+  intros H.
+  rewrite -> H.
+  intros I.
+  rewrite -> I.
+  reflexivity. Qed.
 
+Theorem mult_0_plus : forall n m: nat,
+  (0 + n) × m = n × m.
+Proof.
+  intros n m.
+  rewrite -> plus_0_n.
+  reflexivity. Qed.
+(* using the rewrite tactic with a previously proved theorem
+    rather than a hypothesis from the context *)
 
+(* Exercise mult_S_1 *)
+Theorem mult_S_1 : forall n m : nat,
+  m = S n ->
+  m × (1 + n) = m × m.
+Proof.
+  intros n m.
+  intros H.
+  rewrite -> H.
+  reflexivity.
+  Qed.
 
-
-
-
-
-
-
+(* Proof by Case Analysis *)
 
 
 
