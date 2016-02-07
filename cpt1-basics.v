@@ -381,10 +381,63 @@ Proof.
   Qed.
 
 (* Proof by Case Analysis *)
+(* trying to prove the following using simpl. will get stuck *)
+Theorem plus_1_neq_0_firsttry : forall n : nat,
+  beq_nat (n + 1) 0 = false.
+Proof.
+  intros n.
+  simpl. (* does nothing! *) 
+Abort.
+(* definitions of beq_nat and + begin by performing a match
+    but here, the first arg to + is the unknown n, and the
+    arg to beq_nat is the compound expression n+1.
+    they cannot be simplified *)
 
+(* consider the possible forms of n separately.
+    If n is O, then we can calculate beq_nat(n+1) 0 and check false
+    If n = S n' for some n', we don't know what n+1 is, but
+      we can at least calculate it will begin with one S,
+      that's close enought to calculate beq_nat(n+1) 0 = false.
+*)
 
+Theorem plus_1_neq_0 : forall n : nat,
+  beq_nat (n + 1) 0 = false.
+Proof.
+  intros n. destruct n as [ | n'].
+    reflexivity.
+    reflexivity.
+  Qed.
 
+(* destruct generates cases where n = O where n = S n'.
+    generates two goals that gets proved separately, 
+    in order to get Coq to accept the Thm as proved *)
 
+(* as [ | n'] is an intro pattern. It wells Coq what
+    varnames to introduce in each subgoal.
+    a list of names separated by | gets generated.
+    Here, the first component is emptyu, since O is nullary.
+    The second component gives a single name n', since S is a unary constructor
+*)
+
+Theorem negb_involutive : forall b : bool,
+  negb (negb b) = b.
+Proof.
+  intros b. destruct b.
+  reflexivity.
+  reflexivity.
+  Qed.
+
+(* Exercise - zero_nbeq_plus_1 *)
+Theorem zero_nbeq_plus_1 : forall n : nat,
+  beq_nat 0 (n + 1) = false.
+Proof.
+  intros n.
+  destruct n.
+  reflexivity.
+  reflexivity.
+  Qed.
+
+(* More exercises *)
 
 
 
