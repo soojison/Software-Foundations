@@ -425,7 +425,7 @@ Proof.
   intros b. destruct b.
   reflexivity.
   reflexivity.
-  Qed.
+Qed.
 
 (* Exercise - zero_nbeq_plus_1 *)
 Theorem zero_nbeq_plus_1 : forall n : nat,
@@ -435,12 +435,88 @@ Proof.
   destruct n.
   reflexivity.
   reflexivity.
-  Qed.
+Qed.
 
 (* More exercises *)
+Theorem identity_fn_applied_twice :
+  forall (f: bool -> bool),
+  (forall (x: bool), f x = x) ->
+  forall (b : bool), f (f b) = b.
+Proof.
+  intros.
+  rewrite -> H.
+  rewrite -> H.
+  reflexivity.
+Qed.
 
+Theorem negation_fn_applied_twice :
+  forall (f: bool -> bool),
+  (forall (x: bool), f x = negb x) ->
+  forall (b : bool), f (f b) = b.
+Proof. 
+  intros.
+  rewrite -> H.
+  rewrite -> H.
+  destruct b.
+  compute.
+  reflexivity.
+  compute.
+  reflexivity.
+Qed.
+  
 
+Theorem andb_eq_orb :
+  forall(b c : bool),
+  (andb b c = orb b c) ->
+  b = c.
+Proof.
+  intros b c.
+  destruct b.
+  destruct c.
+  compute.
+  reflexivity.
+  compute.
+  intro H.
+  rewrite -> H.
+  reflexivity.
+  destruct c.
+  compute.
+  intro H.
+  rewrite -> H.
+  reflexivity.
+  compute.
+  reflexivity.
+Qed.
 
+(* Exercise - binary *)
+Inductive bin : Type :=
+  | SO   : bin
+  | S1  : bin -> bin
+  | S2  : bin -> bin.
 
+Fixpoint incr (b : bin) : bin :=
+  match b with
+  | SO => S2 SO
+  | S1 n => S2 n
+  | S2 n => S1 (incr n)
+  end.
 
+Fixpoint bin_to_nat (b : bin) : nat :=
+  match b with
+  | SO => 0
+  | S1 n => 2 × (bin_to_nat n)
+  | S2 n => 1 + (2 × (bin_to_nat n))
+  end.
+
+Fixpoint nat_to_bin (n : nat) : bin :=
+  match n with 
+  | O => SO
+  | S n' => incr (nat_to_bin n')
+end.
+
+Theorem bin_correct :
+  forall n : nat,
+  forall b : bin,
+  (nat_to_bin n = b) ->
+  (bin_to_nat b = n).
 
