@@ -513,10 +513,11 @@ Fixpoint nat_to_bin (n : nat) : bin :=
   | O => SO
   | S n' => incr (nat_to_bin n')
 end.
-
+(*
 Theorem bin_correct :
   forall n : nat,
   forall b : bin,
   (nat_to_bin n = b) ->
   (bin_to_nat b = n).
 
+*)
