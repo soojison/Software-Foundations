@@ -222,4 +222,121 @@ Qed.
 
 (* Proofs within proofs *)
     
+(* convenient to be able to simply state and prove
+    the neede "sub-theorem" where it's used. 
+    This is where assert comes in *)
 
+Theorem mult_0_plus' : forall n m: nat,
+  (0 + n) × m = n × m.
+Proof.
+  intros n m.
+  assert (H: 0 + n = n).
+    Case "Proof of assertion".
+      reflexivity.
+  rewrite -> H.
+  reflexivity.
+Qed.
+
+(* assert introduces two sub-goals.
+    The assertion itself (by prefixing it with H:)
+    The same as the one at the point we invoke assert
+      in the context, we have the assumption H.
+  So, assert generates one subgoal where we must
+    prove the asserted fact and a second subgoal  
+    where we can use the asserted fact to make progress
+*)
+(* ex. (n + m) + (p + q) = (m + n) + (p + q).
+    rewrite command is dumb when it comes to the
+    location where it applies.
+*)
+Theorem plus_rearrange_firsttry : forall n m p q : nat,
+  (n + m) + (p + q) = (m + n) + (p + q).
+Proof.
+  intros n m p q.
+  rewrite -> plus_comm.
+Abort.
+
+(* we introduce a local lemma stating that
+    m + n = n + m.
+*)
+Theorem plus_rearrange : forall n m p q : nat,
+  (n + m) + (p + q) = (m + n) + (p + q).
+Proof.
+  intros n m p q.
+  assert (H: n + m = m + n).
+    Case "Proof of assertion".
+    rewrite -> plus_comm.
+    reflexivity.
+  rewrite -> H.
+  reflexivity.
+Qed.
+  
+
+Theorem plus_swap : forall n m p : nat,
+  n + (m + p) = m + (n + p).
+Proof.
+  intros n m p.
+  rewrite -> plus_comm.
+  rewrite <- plus_assoc.
+  assert (H: p + n = n + p).
+    rewrite -> plus_comm.
+    reflexivity.
+  rewrite -> H.
+  reflexivity.
+Qed.
+
+Theorem mult_0 : forall n, 
+  n*0 = 0.
+Proof.
+  intros n.
+  induction n as [|n'].
+    reflexivity.
+    simpl.
+    rewrite -> IHn'.
+    reflexivity.
+Qed.
+
+Theorem mult_1: forall n, 
+  n*1 = n.
+Proof.
+  intros n. induction n as [|n'].
+  simpl.
+  reflexivity.
+  simpl.
+  rewrite -> IHn'.
+  reflexivity.
+Qed.
+
+Theorem mult_comm_lemma : forall n m,
+  m * S n = m + m * n.
+Proof.
+  intros n m.
+  induction m as [|m'].
+  Case "m = 0".
+    simpl.
+    reflexivity.
+  Case "m != 0".
+    simpl.
+    rewrite -> plus_swap.
+    rewrite -> IHm'.
+    reflexivity.
+Qed.
+  
+Theorem mult_comm : forall m n : nat,
+  m × n = n × m.
+Proof.
+  intros n m.
+  induction n as [|n'].
+  Case "0".
+    simpl.
+    rewrite -> mult_0.
+    reflexivity.
+  Case "S n'".
+    simpl.
+    rewrite -> IHn'.
+    rewrite -> mult_comm_lemma.
+    reflexivity.
+Qed.
+
+
+(* More Exercises *)
