@@ -340,3 +340,63 @@ Qed.
 
 
 (* More Exercises *)
+
+(* reading group stuff *)
+Check nat_ind.
+(* 
+nat_ind
+     : forall P : nat -> Prop,
+       P 0 -> (forall n : nat, P n -> P (S n)) -> forall n : nat, P n
+
+  - this is natural number induction principle
+*)
+Print nat_ind.
+(*
+=> arg of lamda  and body of lambda separate
+-> arrow for type
+*)
+
+(* Proof is just a program! *)
+(* Induction is not built in but you make it work by definitions *)
+Print nat_rect.
+
+Inductive list (A:Set) : Set :=
+  | Nil : list A
+  | Cons : A -> list A -> list A. (* rightmost arrow: return type, left: args *)
+Check list_ind.
+(* form of list is identical to form of nats *)
+(* proposition for inner part of the list holds -> can show
+  it works for cons'ing arbitrary a on the list *)
+
+(*
+  Cons 0 : list A -> list A.
+    HOFuns....
+  Cons : A x list A -> list A (we pass in a "pair")
+*)
+
+Inductive Foo : Set :=
+  | A : Foo (* a is a constant of type Foo *)
+  | B : nat -> Foo -> Foo -> Foo (* func that produces Foo *)
+  | C : Foo -> list Foo -> Foo
+  | D : Foo.
+
+(* induction proof involving Foo
+    induction on Foo -> 3 cases
+      A: base case. Foo is Foo
+      B: shape of Foo obj is B.
+          get 2 inductive hypotheses
+      C: shape of Foo object is C.
+          C f l -> that whole thing is type Foo
+          f is a smaller instance of Foo.
+          induction hypothesis over f.
+            my claim holds over this f.
+*)
+
+Check Foo_ind.
+
+(*
+  prove that my proposition holds for A
+  Foo has form B n f0 f1 -> assume that P HOLDS FOR F0 AND F1, N IS ARBITRARY NATURAL NUMBER.
+  C has form C f1 l -> assume P holds for f, l = arbitrary list.
+  prove that my prop holds for D
+ *)
