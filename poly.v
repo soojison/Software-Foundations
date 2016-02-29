@@ -120,4 +120,30 @@ so we define something *)
 
 (* Polymorphic lists exercises *)
 Fixpoint repeat {X:Type} (n:X) (count:nat) : list X :=
-  
+  match count with
+    | 0 => nil
+    | S m => n :: repeat n m
+  end.
+
+Example test_repeat1:
+  repeat true 2 = cons true (cons true nil).
+Proof. simpl. reflexivity. Qed.
+
+Theorem nil_app : forall X:Type, forall l:list X,
+                    app [] l = l.
+Proof.
+  simpl. reflexivity.
+Qed.
+
+Theorem rev_snoc : forall X : Type,
+                   forall v : X,
+                   forall s : list X,
+                     rev (snoc s v) = v :: (rev s).
+Proof.
+  intros.
+  induction s.
+  simpl. reflexivity.
+  simpl. rewrite -> IHs. simpl. reflexivity.
+Qed.
+
+
